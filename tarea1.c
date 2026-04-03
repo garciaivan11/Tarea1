@@ -41,14 +41,20 @@ void mostrarMenuPrincipal() {
   puts("8) Salir");
 }
 
+void convertirMayusculas(char *nombre) {
+  for (int i = 0; nombre[i] != '\0'; i++) {
+    nombre[i] = toupper((unsigned char)nombre[i]);
+  }
+}
+
 void registrar_categorias(List *categorias) {
   printf("Registrar nueva categoría\n");
 
   // INGRESAR NOMBRE CATEGORÍA
   char nombre[50];
   printf("Ingresa el nombre de la nueva categoría: ");
-  scanf("%50s", nombre);
-  toupper(nombre); // Transformar a mayusculas por estetica y funcionalidad al comparar.
+  scanf(" %49[^\n]", nombre);
+  convertirMayusculas(nombre); // Transformar a mayusculas por estetica y funcionalidad al comparar.
   printf("\n");
 
   // VALIDAR SI EXISTE CATEGORÍA
@@ -63,6 +69,10 @@ void registrar_categorias(List *categorias) {
 
 // SI PASA VERIFICACIÓN: SE CREA NUEVA CATEGORÍA
   Categoria *nuevaCategoria = (Categoria *)malloc(sizeof(Categoria));
+  if (nuevaCategoria == NULL) {
+    printf("Error: No se pudo asignar memoria.\n");
+    exit(EXIT_FAILURE);
+  }
   strcpy(nuevaCategoria->nombre, nombre);
   nuevaCategoria->pendientes = 0;
   nuevaCategoria->listaTareas = list_create();
@@ -72,6 +82,7 @@ void registrar_categorias(List *categorias) {
 
   puts("¡Se ha creado la categoría con éxito!");
 }
+
 
 void mostrar_categorias(List *categorias) {
   // Mostrar categorías
