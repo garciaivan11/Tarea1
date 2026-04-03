@@ -2,6 +2,27 @@
 #include "tdas/extra.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+// ================  STRUCTS  ================
+
+typedef struct {
+  char descripcion[100];
+  char categoria[50];
+  char hora[30];
+} Tarea;
+
+typedef struct {
+  char nombre[50];
+  size_t pendientes;
+  List *listaTareas;
+} Categoria;
+
+// ================  STRUCTS  ================
+
+// ================  FUNCIONES  ================
+
 
 // Menú principal
 void mostrarMenuPrincipal() {
@@ -22,7 +43,34 @@ void mostrarMenuPrincipal() {
 
 void registrar_categorias(List *categorias) {
   printf("Registrar nueva categoría\n");
-  // Aquí implementarías la lógica para registrar una nueva categoría
+
+  // INGRESAR NOMBRE CATEGORÍA
+  char nombre[50];
+  printf("Ingresa el nombre de la nueva categoría: ");
+  scanf("%50s", nombre);
+  toupper(nombre); // Transformar a mayusculas por estetica y funcionalidad al comparar.
+  printf("\n");
+
+  // VALIDAR SI EXISTE CATEGORÍA
+  Categoria *categoriaActual = list_first(categorias);
+  while (categoriaActual != NULL) {
+    if (strcmp(nombre, categoriaActual->nombre) == 0) {
+      printf("¡Ya existe la categoría %s!", categoriaActual->nombre);
+      return;
+    }
+    categoriaActual = list_next(categorias);
+  }
+
+// SI PASA VERIFICACIÓN: SE CREA NUEVA CATEGORÍA
+  Categoria *nuevaCategoria = (Categoria *)malloc(sizeof(Categoria));
+  strcpy(nuevaCategoria->nombre, nombre);
+  nuevaCategoria->pendientes = 0;
+  nuevaCategoria->listaTareas = list_create();
+
+// AGREGAR CATEGORÍA CREADA
+  list_pushBack(categorias, nuevaCategoria);
+
+  puts("¡Se ha creado la categoría con éxito!");
 }
 
 void mostrar_categorias(List *categorias) {
@@ -30,6 +78,10 @@ void mostrar_categorias(List *categorias) {
   printf("Categorías:\n");
   // Aquí implementarías la lógica para mostrar las categorías
 }
+
+// ================  FUNCIONES  ================
+
+// ================  MAIN  ================
 
 int main() {
   char opcion;
@@ -46,7 +98,7 @@ int main() {
       registrar_categorias(categorias);
       break;
     case '2':
-      // Lógica para eliminar una categoría
+      eliminar_categorias(categorias);
       break;
     case '3':
       mostrar_categorias(categorias);
@@ -78,3 +130,5 @@ int main() {
 
   return 0;
 }
+
+// ================  MAIN  ================
