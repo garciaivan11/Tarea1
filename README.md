@@ -16,10 +16,10 @@ Con este struct podemo crear categorías introduciendo su nombre y por estetica 
 
 ## FUNCIONES:
 ### 1. Registrar Categoría:
-Está función permite al usuario registrar una nueva categoría a su lista, donde deberá ingresar el nombre de la categoría que desea agregar y luego se validará si esa categoría ya existe recorriendo la lista; en dicho caso se reportará al usuario que ya existe la categoría y se realiza un return, de lo contrario se reserva memoria para la nueva categoría y se valida que no hubiera problema al reservar memoria, para luego inicializar los datos, pasar el nombre de la categoría a la nueva variable de "nuevaCategoria" y finalmente guardar en la lista está nueva categoría mostrando en pantalla un mensaje de que se logró crear la categoría.
+Esta función permite al usuario registrar una nueva categoría a su lista, donde deberá ingresar el nombre de la categoría que desea agregar y luego se validará si esa categoría ya existe recorriendo la lista; en dicho caso se reportará al usuario que ya existe la categoría y se realiza un return, de lo contrario se reserva memoria para la nueva categoría y se valida que no hubiera problema al reservar memoria, para luego inicializar los datos, pasar el nombre de la categoría a la nueva variable de "nuevaCategoria" y finalmente guardar en la lista está nueva categoría mostrando en pantalla un mensaje de que se logró crear la categoría.
 
 ### 2. Eliminar Categoría:
-Está función permite eliminar una categoría y a su vez las tareas correspondiente a esa categoría, funciona de la siguiente manera: 
+Esta función permite eliminar una categoría y a su vez las tareas correspondiente a esa categoría, funciona de la siguiente manera: 
 1. Se le pide al usuario el nombre de la categoría y se coloca en mayusculas para poder compararla con las de la lista de categorías. 
 1. Se recorre la lista de categorías validando en cada iteración si el nombre que ingresó el usuario es igual al de la categoría que se esté verificando en cada iteración, en caso de encontrarla se hace un popCurrent para eliminar de la lista esa categoría y luego se libera la memoria de esa categoría, tambien se coloca el flag = 1 (nos permitirá confirmar que se contró una categoría valida para la eliminación de tareas) y se corta el ciclo. 
 1. Se revisa si se encontró una categoría valida mediante el flag, en caso de que no se haya encontrado se emite un mensaje correspondiente y se retorna. Si hubo una categoría valida se crea una colaAux para el traspaso de tareas y se crea una variable tipo Tarea para guardar la tarea de cada iteración (*tareaActual). 
@@ -27,6 +27,8 @@ Está función permite eliminar una categoría y a su vez las tareas correspondi
 1. Se traspasan los datos de la colaAux a la original, pero está vez ya modificados sin las tareas correspondientes a la categoría que se deseaba eliminar.
 1. Se libera la memoria de colaAux y acaba la función.
 
+### 3. Mostrar Categorías:
+Esta función recorre la lista de categorías y muestra las categorías existentes junto a la cantidad de tareas que contiene cada una, se utilizó un diseño tipo tabla para mostrar los datos, además de hacer uso de especificadores de formato para manejar el espaciado de los datos en un estilo más organizado y legible.
 
 
 ---

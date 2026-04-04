@@ -134,8 +134,24 @@ void eliminar_categorias(List *categorias, Queue *tareasGenerales) {
 
 void mostrar_categorias(List *categorias) {
   // Mostrar categorías
-  printf("Categorías:\n");
-  // Aquí implementarías la lógica para mostrar las categorías
+  printf("==== LISTADO DE CATEGORÍAS ===\n\n");
+  
+  Categoria *categoriaActual = list_first(categorias);
+  size_t i = 0;
+
+  printf("+---------------------------+-----------------------+\n");
+  printf("| CATEGORÍA                 | TAREAS PENDIENTES     |\n");
+  printf("+---------------------------+-----------------------+\n");
+  while (categoriaActual != NULL) {
+    i ++;
+    printf("| %-25s |          %4zu         |\n", categoriaActual->nombre, categoriaActual->pendientes);
+    categoriaActual = list_next(categorias);
+  }
+  printf("+---------------------------+-----------------------+\n");
+
+  if (i == 0) printf("No se han registrado categorías aún.\n");
+  else printf("\nTotal: %zu categorías encontradas.\n", i);
+  return;
 }
 
 // ================  FUNCIONES  ================
