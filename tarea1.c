@@ -1,4 +1,5 @@
 #include "tdas/list.h"
+#include "tdas/queue.h"
 #include "tdas/extra.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +17,6 @@ typedef struct {
 typedef struct {
   char nombre[50];
   size_t pendientes;
-  List *listaTareas;
 } Categoria;
 
 // ================  STRUCTS  ================
@@ -75,14 +75,62 @@ void registrar_categorias(List *categorias) {
   }
   strcpy(nuevaCategoria->nombre, nombre);
   nuevaCategoria->pendientes = 0;
-  nuevaCategoria->listaTareas = list_create();
 
 // AGREGAR CATEGORÍA CREADA
   list_pushBack(categorias, nuevaCategoria);
 
-  puts("¡Se ha creado la categoría con éxito!");
+  puts("¡Se ha creado la categoría %s con éxito!", nombre);
+  return;
 }
 
+void eliminar_categorias(List *categorias, Queue *tareasGenerales) {
+  printf("Eliminar una categoría\n");
+
+  // INGRESAR NOMBRE CATEGORÍA
+  char nombre[50];
+  size_t tareasCategoria;
+  printf("Ingresa el nombre de la categoría que quieres eliminar: ");
+  scanf(" %49[^\n]", nombre);
+  convertirMayusculas(nombre);
+  printf("\n");
+
+// VALIDAR QUE EXISTA Y ELIMINARLO
+  unsigned short flag = 0; // Para marcar si se encontró alguna categoría
+
+// ELIMINAR CATEGORÍA
+  Categoria *categoriaActual = list_first(categorias);
+  while (categoriaActual != NULL) {
+    if (strcmp(nombre, categoriaActual->nombre) == 0) {
+      tareasCategoria = categoriaActual->pendientes;
+      list_popCurrent(categorias);
+      free(categoriaActual);
+      flag = 1;
+      break;
+    }
+    categoriaActual = list_next(categorias);
+  }
+
+// ELIMINAR TAREAS CON LA CATEGORÍA
+  if (!flag) printf("¡La categoría que deseas eliminar no se encuentra registrada!"); // Si flag == 0, es por que no se encontró una categoría con el nombre proporcionado por el usuario.
+  else { // Si flag == 1, se encontró la categoría y se eliminó, ahora hay que eliminar las tareas que pertenezcan a esa categoría.
+    Tarea *tareaActual;
+    Queue *colaAux = queue_create(NULL); // Para traspasar las tareas que no sean de la categoría a eliminar.
+
+    while (queue_front(tareasGenerales) != NULL) { // Eliminar tareas de la categoría escogida y traspasarla al aux.
+      tareaActual = (Tarea *) queue_remove(tareasGenerales); // Se saca de la cola original el primer dato.
+      if (strcmp(tareaActual->categoria, nombre) != 0) queue_insert(colaAux, tareaActual); // Se verifica si pertenece a la categoría escogida, si no pertenece se guarda en la cola aux.
+      else free(tareaActual); // Y si pertenece a la categoría se libera la memoria de esa tarea, eliminadola para siempre.
+    }
+
+    while (queue_front(colaAux) != NULL) {  // Se traspasan los datos de la colaAux a la original, para guardar la lista nuevamente pero sin las tareas pertenecientes a la categoría seleccionada.
+      queue_insert(tareasGenerales, queue_remove(colaAux));
+    }
+
+    free(colaAux); // Se liberá la memoria de colaAux.
+    printf("¡La categoría %s se ha eliminado, contaba con %zu tareas!", nombre, tareasCategoria);
+  }
+  return;
+}
 
 void mostrar_categorias(List *categorias) {
   // Mostrar categorías
@@ -97,6 +145,7 @@ void mostrar_categorias(List *categorias) {
 int main() {
   char opcion;
   List *categorias = list_create(); // Lista para almacenar categorías
+  Queue *tareasGenerales = queue_create(NULL); // Cola para ir almacenando las tareas del usuario
 
   do {
     mostrarMenuPrincipal();
@@ -109,7 +158,7 @@ int main() {
       registrar_categorias(categorias);
       break;
     case '2':
-      eliminar_categorias(categorias);
+      eliminar_categorias(categorias, tareasGenerales);
       break;
     case '3':
       mostrar_categorias(categorias);
