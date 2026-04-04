@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 // ================  STRUCTS  ================
 
@@ -28,7 +29,7 @@ typedef struct {
 void mostrarMenuPrincipal() {
   limpiarPantalla();
   puts("========================================");
-  puts("     Sistema de Gestión Hospitalaria");
+  puts("     Sistema de Gestión de Tareas");
   puts("========================================");
 
   puts("1) Nueva Categoría");
@@ -48,7 +49,7 @@ void convertirMayusculas(char *nombre) {
 }
 
 void registrar_categorias(List *categorias) {
-  printf("Registrar nueva categoría\n");
+  printf("==== REGISTRAR NUEVA CATEGORÍA ====\n");
 
   // INGRESAR NOMBRE CATEGORÍA
   char nombre[50];
@@ -61,7 +62,7 @@ void registrar_categorias(List *categorias) {
   Categoria *categoriaActual = list_first(categorias);
   while (categoriaActual != NULL) {
     if (strcmp(nombre, categoriaActual->nombre) == 0) {
-      printf("¡Ya existe la categoría %s!", categoriaActual->nombre);
+      printf("¡Ya existe la categoría %s!\n", categoriaActual->nombre);
       return;
     }
     categoriaActual = list_next(categorias);
@@ -79,12 +80,12 @@ void registrar_categorias(List *categorias) {
 // AGREGAR CATEGORÍA CREADA
   list_pushBack(categorias, nuevaCategoria);
 
-  puts("¡Se ha creado la categoría %s con éxito!", nombre);
+  printf("¡Se ha creado la categoría %s con éxito!", nombre);
   return;
 }
 
 void eliminar_categorias(List *categorias, Queue *tareasGenerales) {
-  printf("Eliminar una categoría\n");
+  printf("==== ELIMINAR CATEGORÍA ====\n");
 
   // INGRESAR NOMBRE CATEGORÍA
   char nombre[50];
@@ -95,7 +96,7 @@ void eliminar_categorias(List *categorias, Queue *tareasGenerales) {
   printf("\n");
 
 // VALIDAR QUE EXISTA Y ELIMINARLO
-  unsigned short flag = 0; // Para marcar si se encontró alguna categoría
+  unsigned short existe = 0; // Para marcar si se encontró alguna categoría
 
 // ELIMINAR CATEGORÍA
   Categoria *categoriaActual = list_first(categorias);
@@ -104,15 +105,15 @@ void eliminar_categorias(List *categorias, Queue *tareasGenerales) {
       tareasCategoria = categoriaActual->pendientes;
       list_popCurrent(categorias);
       free(categoriaActual);
-      flag = 1;
+      existe = 1;
       break;
     }
     categoriaActual = list_next(categorias);
   }
 
 // ELIMINAR TAREAS CON LA CATEGORÍA
-  if (!flag) printf("¡La categoría que deseas eliminar no se encuentra registrada!"); // Si flag == 0, es por que no se encontró una categoría con el nombre proporcionado por el usuario.
-  else { // Si flag == 1, se encontró la categoría y se eliminó, ahora hay que eliminar las tareas que pertenezcan a esa categoría.
+  if (existe == 0) printf("¡La categoría que deseas eliminar no se encuentra registrada!"); // Si existe == 0, es por que no se encontró una categoría con el nombre proporcionado por el usuario.
+  else { // Si existe == 1, se encontró la categoría y se eliminó, ahora hay que eliminar las tareas que pertenezcan a esa categoría.
     Tarea *tareaActual;
     Queue *colaAux = queue_create(NULL); // Para traspasar las tareas que no sean de la categoría a eliminar.
 
@@ -142,6 +143,7 @@ void mostrar_categorias(List *categorias) {
   printf("+---------------------------+-----------------------+\n");
   printf("| CATEGORÍA                 | TAREAS PENDIENTES     |\n");
   printf("+---------------------------+-----------------------+\n");
+  // Se recorre la lista de categorías printeando cada una de las categorías con un formato visual especial, mediante un formateo de texto.
   while (categoriaActual != NULL) {
     i ++;
     printf("| %-25s |          %4zu         |\n", categoriaActual->nombre, categoriaActual->pendientes);
@@ -152,6 +154,67 @@ void mostrar_categorias(List *categorias) {
   if (i == 0) printf("No se han registrado categorías aún.\n");
   else printf("\nTotal: %zu categorías encontradas.\n", i);
   return;
+}
+
+void registrar_pendiente(Queue *tareasGenerales, List *categorias) {
+  printf("==== REGISTRAR NUEVA TAREA ====\n");
+
+  // Solicitar nombre de categoría
+  printf("Ingresa la categoría a la que pertenecerá está tarea (Si no existe se creará): ");
+  char categoria[50];
+  scanf(" %49[^\n]", categoria);
+  printf("\n");
+  convertirMayusculas(categoria);
+
+  // Verificar si existe la categoría mencionada
+  unsigned short existe  = 0;
+
+  Categoria *categoriaActual = list_first(categorias);
+  while (categoriaActual != NULL) {
+    if (strcmp(categoria, categoriaActual->nombre) == 0) {
+      existe = 1;
+      break;
+    }
+    categoriaActual = list_next(categorias);
+  }
+
+  // Si no existe se crea la categoría
+  if (existe == 0) {
+    Categoria *nuevaCategoria = (Categoria *)malloc(sizeof(Categoria));
+    if (nuevaCategoria == NULL) exit(EXIT_FAILURE);
+    strcpy(nuevaCategoria->nombre, categoria);
+    nuevaCategoria->pendientes = 0;
+    list_pushBack(categorias, nuevaCategoria);
+    categoriaActual = nuevaCategoria;
+    printf("Se ha creado la nueva categoría: %s. \n", categoria);
+  }
+
+  // Se Solicitan los datos para colocar en la nueva tarea
+  char descripcion[100];
+  char hora[30];
+  printf("Ingresa la descripción de tu tarea (máx 99 car.): ");
+  scanf(" %99[^\n]", descripcion);
+  printf("\n");
+
+  // Registro del día y hora en el que se creó la tarea
+  time_t t = time(NULL);                                   // Se recopila cuantos segundos han pasado desde el 1 de enero de 1970 (Número gigante que entiende <time.h>)
+  struct tm *tm_info = localtime(&t);                      // Transforma esa cantidad de segundos en varios campos (Año, mes, dia, hora)
+  char bufferTiempo[30];                                   // Creamos la variable donde se guardaran los datos horarios
+  strftime(bufferTiempo, 30, "%d/%m/%Y %H:%M", tm_info);   // Formateo de texto que extrae los datos y los guarda en la variable que utilizamos
+
+  // Se crea la tarea y se le adjuntan los datos recopilados
+  Tarea *nuevaTarea = (Tarea *)malloc(sizeof(Tarea));
+  if (nuevaTarea == NULL) exit(EXIT_FAILURE);
+
+  strcpy(nuevaTarea->descripcion, descripcion);
+  strcpy(nuevaTarea->categoria, categoria);
+  strcpy(nuevaTarea->hora, bufferTiempo);
+
+  // Se inserta la nueva tarea a la cola y se aumentan los pendientes de la categoría correspondiente
+  queue_insert(tareasGenerales, nuevaTarea);
+  categoriaActual->pendientes ++;
+
+  printf("\n¡Tarea registrada con éxito en la categoría %s, a las %s!\n", categoria, bufferTiempo);
 }
 
 // ================  FUNCIONES  ================
@@ -180,7 +243,7 @@ int main() {
       mostrar_categorias(categorias);
       break;
     case '4':
-      // Lógica para registrar un paciente
+      registrar_pendiente(tareasGenerales, categorias);
       break;
     case '5':
       // Lógica para atender al siguiente paciente

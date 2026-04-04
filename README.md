@@ -30,6 +30,13 @@ Esta función permite eliminar una categoría y a su vez las tareas correspondie
 ### 3. Mostrar Categorías:
 Esta función recorre la lista de categorías y muestra las categorías existentes junto a la cantidad de tareas que contiene cada una, se utilizó un diseño tipo tabla para mostrar los datos, además de hacer uso de especificadores de formato para manejar el espaciado de los datos en un estilo más organizado y legible.
 
+### 4. Registrar Pendiente:
+Esta función permite al usuario crear una tarea y agregarla a su cola de tareas pendientes, 
+- Se inicia pidiendo la categoría a la que pertenecerá la tarea para verificar que exista. 
+- En caso de que la categoría no existe, se creará e inicializaran los datos usando el mismo nombre que el usuario ingresó.
+- Se pide la descripción y además se registra la hora y fecha en que se hizo el ingreso de datos.
+- Se crea la nueva tarea y se inicializan las variables con los datos recopilados.
+- Se agrega la tarea a la lista general de tareas y se suma una tarea pendiente a la categoría perteneciente.
 
 ---
 
@@ -60,3 +67,13 @@ Está función nos permite convertir los nombres de las categorías a mayusculas
 
 > **SOLUCIONADO:** 03/04 - 19:35 >  Pensando en el problema de eliminar las tareas de la lista acabo de resolver mi duda y es que que la cola al final es la ganadora, por que con la lista tendría que recorrer muchas veces al ser una lista simple. Por ende con la cola hago una pasada y voy descartando lo que no me sirve. Entonces al final es el TDA más optimo para este problema.
 
+### REGISTRAR HORA EXACTA:
+> 04/04 - 00:39 > Hasta el momento no me han enseñado como usar bibliotecas externas como tal, pero toca investigar sobre como hacer que se registre la hora exacta de una tarea, probablemente mediante una biblioteca.
+
+> 04/04 - 00:41 > Esto es lo que encontré en google sobre una biblioteca que me permita registrar la hora exacta: 
+>"La biblioteca estándar de C diseñada para manejar fecha y hora es <time.h>. Esta biblioteca, combinada con funciones de manipulación de cadenas como sprintf o strftime (de <stdio.h> o <time.h>), permite capturar la hora exacta de un input y almacenarla en una variable char (cadena de caracteres). 
+*Biblioteca y funciones principales*
+<time.h>: Proporciona tipos como time_t (para obtener el tiempo actual) y estructuras como struct tm (para desglosar hora, minuto, segundo).
+time(): Obtiene la hora actual del sistema.
+localtime(): Convierte time_t a un tiempo local desglosado en struct tm.
+strftime(): Formatea la estructura de tiempo (tm) en una cadena de caracteres (char[]) personalizada (ej. "HH:MM:SS"). "
