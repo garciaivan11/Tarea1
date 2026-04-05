@@ -1,4 +1,6 @@
 # PLANIFICADOR DINÁMICO TAREAS (Smart TODO)
+> Iván García Briones - Ingeniería Civil Informática
+---
 
 ## Objetivo del programa:
 Esta aplicación es un sistema de gestión de tareas organizado por categorías personalizadas. El programa utiliza el sistema FIFO (First In, First Out) para asegurar que el despacho de pendientes respete estrictamente el orden de llegada de las tareas.
@@ -37,6 +39,10 @@ Esta función permite al usuario crear una tarea y agregarla a su cola de tareas
 - Se pide la descripción y además se registra la hora y fecha en que se hizo el ingreso de datos.
 - Se crea la nueva tarea y se inicializan las variables con los datos recopilados.
 - Se agrega la tarea a la lista general de tareas y se suma una tarea pendiente a la categoría perteneciente.
+
+### 5. Atender Pendiente:
+Esta función nos permite mostrar la primera tarea de la cola para atenderla y a su vez la elimina de la cola.
+Para que funcioné se quita el primer elemento de la cola y se valida que sea un elemento valido, en caso de ser una tarea se muestra cuál tarea está siendo atendida y se busca la categoría a la que pertenece mediante el recorrido de la lista de categorías, esto se hace para reducir en 1, las tareas pendientes de esa categoría y luego se libera la memoria mediante free(). Finalmente se muestra cual tarea será la siguiente que debe realizar y finaliza la función.
 
 ---
 

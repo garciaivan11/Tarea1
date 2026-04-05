@@ -217,6 +217,38 @@ void registrar_pendiente(Queue *tareasGenerales, List *categorias) {
   printf("\n¡Tarea registrada con éxito en la categoría %s, a las %s!\n", categoria, bufferTiempo);
 }
 
+void atender_pendiente(Queue *tareasGenerales, List *categorias) {
+  Tarea *tareaActual = queue_remove(tareasGenerales); // Sacamos el primer elemento de la cola y guardamos sus datos
+  if (tareaActual == NULL) {  // Verificamos que el elemento que sacamos exista, si no quedaban tareas en la cola se muestra un mensaje
+    printf("¡Libre de pendientes!\n");
+    return; 
+  }
+  // Con el return salimos de la función y evitamos poner un else para el caso 2: Si existe tarea.
+  printf("Atendiendo: %s | Categoría: %s | Momento del registro: %s\n", tareaActual->descripcion, tareaActual->categoria, tareaActual->hora); // Mostramos la tarea
+
+  // Recorremos la lista de categorías para buscar la categoría a la que pertenecía la tarea y disminuimos en 1 los pendientes que le quedan a esa categoría
+  Categoria *categoriaActual = list_first(categorias);
+  while (categoriaActual != NULL) {
+    if (strcmp(categoriaActual->nombre, tareaActual->categoria) == 0) {
+      categoriaActual->pendientes -= 1;
+      break;
+    }
+    categoriaActual = list_next(categorias);
+  }
+
+  free(tareaActual); // Se vacía la memoria utilizada para la tarea
+
+  // Por estitica mostraremos la siguiente tarea para que el usuario sea conciente de cual tendrá despues de completar la actual
+  tareaActual = queue_front(tareasGenerales);
+  if (tareaActual != NULL) {
+    printf("Próxima Tarea: Descripción: %s | Categoría: %s | Momento del registro: %s\n", tareaActual->descripcion, tareaActual->categoria, tareaActual->hora);
+  }
+  else {
+    printf("¡No te quedan tareas pendientes por completar!\n");
+  }
+  return;
+}
+
 // ================  FUNCIONES  ================
 
 // ================  MAIN  ================
@@ -246,7 +278,7 @@ int main() {
       registrar_pendiente(tareasGenerales, categorias);
       break;
     case '5':
-      // Lógica para atender al siguiente paciente
+      atender_pendiente(tareasGenerales, categorias);
       break;
     case '6':
       // Lógica para mostrar el tablero general
@@ -255,7 +287,7 @@ int main() {
       // Lógica para filtrar por categoría
       break;
     case '8':
-      puts("Saliendo del sistema de gestión hospitalaria...");
+      puts("Saliendo del sistema Smart TODO");
       break;
     default:
       puts("Opción no válida. Por favor, intente de nuevo.");
