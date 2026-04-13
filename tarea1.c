@@ -13,6 +13,7 @@ Estudiante: Iván Octavio García Briones
 Carrera: Ingeniería Civíl en Informática
 
 Repositorio Tarea 1: https://github.com/garciaivan11/Tarea1
+Uso de IA: 
 
 =================== REPO DE GIT ============== */ 
 
@@ -290,6 +291,60 @@ void mostrar_pendientes(Queue *tareasGenerales) {
   return;
 }
 
+void filtrar_por_categoria(Queue *tareasGenerales, List *categorias) {
+  printf("==== FILTRADO POR CATEGORÍA ====\n\n");
+
+  // Validar si hay tareas antes de pedir la categoría
+  Tarea *tareaActual = queue_front(tareasGenerales);
+  if (tareaActual == NULL) {
+    printf("No hay tareas registradas en el sistema.\n");
+    return;
+  }
+
+  // Solicitamos la categoría para filtrar
+  char filtro[50];
+  printf("Ingresa el nombre de la categoría que deseas filtrar: ");
+  scanf(" %49[^\n]", filtro);
+  convertirMayusculas(filtro); // Se convierte a mayusculas para comparar con las existentes de forma eficiente
+
+  // Buscamos la categoría en la lista de categorías para ver si existe y si tiene tareas adjuntas
+  Categoria *categoriaActual = list_first(categorias);
+  while (categoriaActual != NULL) {
+    if (strcmp(categoriaActual->nombre, filtro) == 0) break; // Paramos en la categoría cuando la encuentre
+    categoriaActual = list_next(categorias);
+  }
+
+  // Si no existe o no tiene tareas se retorna para evitar más procesamiento
+  if (categoriaActual == NULL) {
+    printf("La categoría '%s' no existe.\n", filtro);
+    return;
+  }
+
+  if (categoriaActual->pendientes == 0) {
+    printf("La categoría '%s' no tiene tareas pendientes.\n", filtro);
+    return;
+  }
+
+
+  // Si llegamos acá es por que si se encontró la categoría y contiene tareas válidas.
+  printf("\nTienes %zu encontradas de la categoría: %s\n", categoriaActual->pendientes, filtro);
+  printf("+------+--------------------------------+------------------+\n");
+  printf("|  ID  | DESCRIPCIÓN                    | FECHA/HORA       |\n");
+  printf("+------+--------------------------------+------------------+\n");
+
+  // Recorremos la lista de tareas general para filtrar
+  size_t i = 0;
+
+  while (tareaActual != NULL) {
+    if (strcmp(tareaActual->categoria, filtro) == 0) {
+      i++;
+      printf("|  %2zu  | %-30s | %-16s |\n", i, tareaActual->descripcion, tareaActual->hora);
+    }
+    tareaActual = queue_next(tareasGenerales);
+  }
+  printf("+------+--------------------------------+------------------+\n");
+  return;
+}
 
 // ================  FUNCIONES  ================
 
@@ -326,7 +381,7 @@ int main() {
       mostrar_pendientes(tareasGenerales);
       break;
     case '7':
-      // Lógica para filtrar por categoría
+      filtrar_por_categoria(tareasGenerales, categorias);
       break;
     case '8':
       puts("Saliendo del sistema Smart TODO");
@@ -340,7 +395,9 @@ int main() {
 
   // Liberar recursos, si es necesario
   list_clean(categorias);
-
+  queue_clean(tareasGenerales);
+  free(categorias);
+  free(tareasGenerales);
   return 0;
 }
 

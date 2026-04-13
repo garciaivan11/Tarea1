@@ -75,11 +75,17 @@ Esta función extrae y muestra la tarea más antigua de la cola (sistema FIFO). 
 ### 6. Visualización del Tablero General:
 Muestra todas las tareas anotadas, desde la más antigua a la más reciente. Para visualizar la lista sin alterar el orden ni borrar nada (evitando el comportamiento destructivo de las colas), se utiliza queue_next. Esto permite "caminar" por los nodos de la cola uno a uno para armar la tabla, manteniendo la integridad de los datos para su posterior uso.
 
+### 7. Filtrado por Categoría:
+Esta función permite al usuario consultar únicamente las tareas asociadas a una categoría específica sin alterar la cola global.
 ---
 
 ## FUNCIONES DE APOYO:
 ### 1. Convertir Mayusculas:
 Esta función transforma los nombres de las categorías a mayúsculas. Esto permite comparar cadenas de texto de forma uniforme (evitando errores por diferencias de escritura) y mejora la estética de las tablas de datos.
+
+1. Validación previa: El sistema verifica si existen tareas en general y luego busca la categoría en la lista de categorías.
+2. Optimización: Si la categoría no existe o si el contador de pendientes es 0, la función termina de inmediato con un mensaje informativo, evitando procesar la cola innecesariamente.
+3. Búsqueda: Si la categoría es válida, se recorre la cola global utilizando queue_front y queue_next. El sistema compara los strings y despliega en una tabla solo aquellas tareas que coinciden con el filtro, respetando estrictamente su orden de llegada original.
 
 ---
 
@@ -104,7 +110,7 @@ Para probar el programa rápidamente:
 1. **Registrar Pendiente**: FUNCIONANDO. Que hace: Registra tareas y guarda la hora usando <time.h>
 1. **Atender Siguiente**: FUNCIONANDO. Que hace: Muestra la tarea que se debe realizar y la elimina de la lista de tareas usando el sistema FIFO.
 1. **Tablero General**: FUNCIONANDO. Que hace: Muestra las tareas junto a sus categorías en lista mediante la hora de registro (igual que FIFO).
-1. **Filtrado por Categoría**: EN DESARROLLO. Aparece en el menú pero falta la lógica.
+1. **Filtrado por Categoría**: FUNCIONANDO. Se muestran únicamente las tareas de una categoría especifica seleccionada por el usuario.
 
 ---
 
