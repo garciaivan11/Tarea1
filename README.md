@@ -3,53 +3,108 @@
 ---
 
 ## Objetivo del programa:
-Esta aplicación es un sistema de gestión de tareas organizado por categorías personalizadas. El programa utiliza el sistema FIFO (First In, First Out) para asegurar que el despacho de pendientes respete estrictamente el orden de llegada de las tareas.
+Esta aplicación es un sistema de gestión de tareas organizado por categorías personalizadas. El programa utiliza el sistema FIFO (First In, First Out) para asegurar que el despacho de pendientes respecte estrictamente el orden de llegada de las tareas, sin importar su categoría.
 
 ---
+
+## Como compilar el programa:
+
+Para compilar y ejecutar este proyecto, asegúrate de tener instalado un compilador de C (como **GCC**) y sigue estos pasos:
+
+1. Descomprimir el archivo: Asegúrate de que el archivo tarea1.c y la carpeta tdas/ estén en el mismo directorio.
+
+1. Compilación: Abre una terminal en la carpeta raíz del proyecto y ejecuta el siguiente comando:
+
+```
+gcc tdas/*.c tarea1.c -Wno-unused-result -o tarea1
+```
+
+Nota: El flag -Wno-unused-result se utiliza para omitir advertencias sobre resultados de funciones no utilizados (como en scanf), manteniendo la terminal limpia durante la compilación.
+
+3. Ejecución: Una vez compilado, inicia el programa con:
+
+```
+./tarea1
+```
+
+---
+
 ## STRUCTS:
 
 ### 1. Tarea:
 Este struct permite guardar la descripción de la tarea en un maximo de 99 caracteres (+ el nulo), el nombre de la categoría a la que pertenece y la hora a la que se registró la tarea. 
 
 ### 2. Categoria:
-Con este struct podemo crear categorías introduciendo su nombre y por estetica en mensajes (poder mencionar cuantas le quedan de cada categoría) ir actualizando las tareas pendientes que tiene el usuario. 
+Permite crear grupos de tareas. Almacena el nombre de la categoría y un contador de tareas pendientes, lo que permite informar al usuario cuántos pendientes tiene en cada área específica.
 
 ---
 
 ## FUNCIONES:
 ### 1. Registrar Categoría:
-Esta función permite al usuario registrar una nueva categoría a su lista, donde deberá ingresar el nombre de la categoría que desea agregar y luego se validará si esa categoría ya existe recorriendo la lista; en dicho caso se reportará al usuario que ya existe la categoría y se realiza un return, de lo contrario se reserva memoria para la nueva categoría y se valida que no hubiera problema al reservar memoria, para luego inicializar los datos, pasar el nombre de la categoría a la nueva variable de "nuevaCategoria" y finalmente guardar en la lista está nueva categoría mostrando en pantalla un mensaje de que se logró crear la categoría.
+Esta función permite al usuario registrar una nueva categoría en su lista. Se ingresa el nombre de la categoría y se valida que no exista previamente recorriendo la lista; en caso de duplicado, se informa al usuario y se realiza un return. De lo contrario, se reserva memoria dinámicamente para la nueva categoría, se inicializan sus datos y se guarda en la lista, mostrando un mensaje de éxito.
 
 ### 2. Eliminar Categoría:
-Esta función permite eliminar una categoría y a su vez las tareas correspondiente a esa categoría, funciona de la siguiente manera: 
-1. Se le pide al usuario el nombre de la categoría y se coloca en mayusculas para poder compararla con las de la lista de categorías. 
-1. Se recorre la lista de categorías validando en cada iteración si el nombre que ingresó el usuario es igual al de la categoría que se esté verificando en cada iteración, en caso de encontrarla se hace un popCurrent para eliminar de la lista esa categoría y luego se libera la memoria de esa categoría, tambien se coloca el flag = 1 (nos permitirá confirmar que se contró una categoría valida para la eliminación de tareas) y se corta el ciclo. 
-1. Se revisa si se encontró una categoría valida mediante el flag, en caso de que no se haya encontrado se emite un mensaje correspondiente y se retorna. Si hubo una categoría valida se crea una colaAux para el traspaso de tareas y se crea una variable tipo Tarea para guardar la tarea de cada iteración (*tareaActual). 
-1. Se empieza a iterar para ir recorriendo la cola original y se va sacando el primer dato validando si pertenece a la categoría eliminada, en caso de que no pertenezca se agrega a la colaAux y en caso de que si pertenezca, se libera la memoria eliminandola para siempre. 
-1. Se traspasan los datos de la colaAux a la original, pero está vez ya modificados sin las tareas correspondientes a la categoría que se deseaba eliminar.
-1. Se libera la memoria de colaAux y acaba la función.
+Permite eliminar una categoría y todas sus tareas asociadas. Funciona de la siguiente manera:
+
+1. Se solicita el nombre de la categoría y se convierte a mayúsculas para compararlo uniformemente.
+
+1. Se recorre la lista de categorías. Al encontrarla, se usa popCurrent para sacarla de la lista, se libera su memoria con free() y se activa un flag = 1 para confirmar el hallazgo.
+
+1. Si no se encuentra (flag en 0), se emite un mensaje y se retorna. Si se encontró, se crea una colaAux para el traspaso de tareas.
+
+1. Se itera sobre la cola original extrayendo cada tarea: si no pertenece a la categoría eliminada, se inserta en colaAux; si pertenece, se libera su memoria permanentemente.
+
+1. Se traspasan los datos de colaAux de vuelta a la cola original para restaurar los pendientes modificados.
+
+1. Se libera la memoria de colaAux y finaliza la función.
 
 ### 3. Mostrar Categorías:
-Esta función recorre la lista de categorías y muestra las categorías existentes junto a la cantidad de tareas que contiene cada una, se utilizó un diseño tipo tabla para mostrar los datos, además de hacer uso de especificadores de formato para manejar el espaciado de los datos en un estilo más organizado y legible.
+Esta función recorre la lista de categorías y muestra los nombres junto a la cantidad de tareas pendientes de cada una. Se utiliza un diseño de tabla mediante especificadores de formato para que los datos se vean organizados y legibles en la terminal.
 
 ### 4. Registrar Pendiente:
-Esta función permite al usuario crear una tarea y agregarla a su cola de tareas pendientes, 
-- Se inicia pidiendo la categoría a la que pertenecerá la tarea para verificar que exista. 
-- En caso de que la categoría no existe, se creará e inicializaran los datos usando el mismo nombre que el usuario ingresó.
-- Se pide la descripción y además se registra la hora y fecha en que se hizo el ingreso de datos.
-- Se crea la nueva tarea y se inicializan las variables con los datos recopilados.
-- Se agrega la tarea a la lista general de tareas y se suma una tarea pendiente a la categoría perteneciente.
+Permite al usuario añadir una tarea nueva a la cola global:
+
+- Se solicita la categoría: si no existe en la lista, el sistema la crea automáticamente.
+- Se pide la descripción y se captura la fecha/hora exacta del registro mediante <time.h>.
+- Se reserva memoria para la nueva tarea, se inicializan sus campos y se inserta al final de la cola general.
+- Se incrementa el contador de pendientes de la categoría correspondiente.
 
 ### 5. Atender Pendiente:
-Esta función nos permite mostrar la primera tarea de la cola para atenderla y a su vez la elimina de la cola.
-Para que funcioné se quita el primer elemento de la cola y se valida que sea un elemento valido, en caso de ser una tarea se muestra cuál tarea está siendo atendida y se busca la categoría a la que pertenece mediante el recorrido de la lista de categorías, esto se hace para reducir en 1, las tareas pendientes de esa categoría y luego se libera la memoria mediante free(). Finalmente se muestra cual tarea será la siguiente que debe realizar y finaliza la función.
+Esta función extrae y muestra la tarea más antigua de la cola (sistema FIFO). Se desencola el primer elemento y se valida que exista; luego, se muestran sus datos en pantalla. El sistema busca la categoría de la tarea en la lista para reducir su contador de pendientes en 1 y libera la memoria de la tarea atendida con free(). Finalmente, se previsualiza cuál es la siguiente tarea en la fila.
+
+### 6. Visualización del Tablero General:
+Muestra todas las tareas anotadas, desde la más antigua a la más reciente. Para visualizar la lista sin alterar el orden ni borrar nada (evitando el comportamiento destructivo de las colas), se utiliza queue_next. Esto permite "caminar" por los nodos de la cola uno a uno para armar la tabla, manteniendo la integridad de los datos para su posterior uso.
 
 ---
 
 ## FUNCIONES DE APOYO:
 ### 1. Convertir Mayusculas:
-Está función nos permite convertir los nombres de las categorías a mayusculas para poder comparar strings uniformemente, y además nos permite tener más bonitas las tablas de tareas por categoría.
+Esta función transforma los nombres de las categorías a mayúsculas. Esto permite comparar cadenas de texto de forma uniforme (evitando errores por diferencias de escritura) y mejora la estética de las tablas de datos.
 
+---
+
+## Ejemplo de uso:
+Para probar el programa rápidamente:
+
+1. Inicia el sistema y usa la opción 1 para crear la categoría PROGRA.
+
+1. Usa la opción 4 para anotar una tarea en la categoría PROGRA con la descripción Terminar tarea 1.
+
+1. Usa la opción 6 (Tablero) para ver que se guardó bien con la hora de tu PC.
+
+1. Usa la opción 5 (Atender) para simular que ya la hiciste y ver cómo se borra del sistema.
+
+---
+
+## Estado de las funciones:
+
+1. **Nueva Categoría**: FUNCIONANDO. Que hace: Crea y valida duplicados.
+1. **Eliminar Categoría**: FUNCIONANDO. Que Hace: Borra categoría y todas sus tareas.
+1. **Mostrar Categorías**: FUNCIONANDO. Que hace: Muestra tabla con contadores.
+1. **Registrar Pendiente**: FUNCIONANDO. Que hace: Registra tareas y guarda la hora usando <time.h>
+1. **Atender Siguiente**: FUNCIONANDO. Que hace: Muestra la tarea que se debe realizar y la elimina de la lista de tareas usando el sistema FIFO.
+1. **Tablero General**: FUNCIONANDO. Que hace: Muestra las tareas junto a sus categorías en lista mediante la hora de registro (igual que FIFO).
+1. **Filtrado por Categoría**: EN DESARROLLO. Aparece en el menú pero falta la lógica.
 
 ---
 

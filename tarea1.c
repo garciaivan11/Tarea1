@@ -7,6 +7,15 @@
 #include <ctype.h>
 #include <time.h>
 
+/* ================ REPO DE GIT ==============
+
+Estudiante: Iván Octavio García Briones
+Carrera: Ingeniería Civíl en Informática
+
+Repositorio Tarea 1: https://github.com/garciaivan11/Tarea1
+
+=================== REPO DE GIT ============== */ 
+
 // ================  STRUCTS  ================
 
 typedef struct {
@@ -249,6 +258,39 @@ void atender_pendiente(Queue *tareasGenerales, List *categorias) {
   return;
 }
 
+void mostrar_pendientes(Queue *tareasGenerales) {
+  printf("=== LISTADO DE TAREAS ===\n\n");
+
+  // Usamos queue_front para posicionar el puntero al inicio de la cola sin extraer elementos.
+  Tarea *tareaActual = queue_front(tareasGenerales);
+
+  // Se válida que existan tareas minimamente.
+  if (tareaActual == NULL) {
+    printf("No se han registrado tareas aún.\n");
+    return;
+  }
+
+  size_t i = 0;
+
+  // Encabezado con formato de tabla para mejorar la estetica del programa.
+  printf("+------+------------------------+--------------------+------------------+\n");
+  printf("|  ID  | DESCRIPCIÓN            | CATEGORÍA          | FECHA/HORA       |\n");
+  printf("+------+------------------------+--------------------+------------------+\n");
+
+  // Recorremos la cola desde principio a fin mostrando en cada iteración las tareas que se han registrado, usando queue_next
+  while (tareaActual != NULL) {
+    i ++;
+    // Se utiliza un formato especial para mostrar las tareas, usando el espacio exacto del encabezado para mantener la estetica.
+    printf("|  %zu  | %-22s | %-18s | %-16s |\n", i, tareaActual->descripcion, tareaActual->categoria, tareaActual->hora);
+    // Avanzamos al siguiente nodo.
+    tareaActual = queue_next(tareasGenerales);
+  }
+  printf("+------+------------------------+--------------------+------------------+\n");
+  printf("\nTe falta un total de %zu tarea(s).\n", i);
+  return;
+}
+
+
 // ================  FUNCIONES  ================
 
 // ================  MAIN  ================
@@ -281,7 +323,7 @@ int main() {
       atender_pendiente(tareasGenerales, categorias);
       break;
     case '6':
-      // Lógica para mostrar el tablero general
+      mostrar_pendientes(tareasGenerales);
       break;
     case '7':
       // Lógica para filtrar por categoría
