@@ -77,15 +77,16 @@ Muestra todas las tareas anotadas, desde la más antigua a la más reciente. Par
 
 ### 7. Filtrado por Categoría:
 Esta función permite al usuario consultar únicamente las tareas asociadas a una categoría específica sin alterar la cola global.
+
+1. Validación previa: El sistema verifica si existen tareas en general y luego busca la categoría en la lista de categorías.
+2. Optimización: Si la categoría no existe o si el contador de pendientes es 0, la función termina de inmediato con un mensaje informativo, evitando procesar la cola innecesariamente.
+3. Búsqueda: Si la categoría es válida, se recorre la cola global utilizando queue_front y queue_next. El sistema compara los strings y despliega en una tabla solo aquellas tareas que coinciden con el filtro, respetando estrictamente su orden de llegada original.
+
 ---
 
 ## FUNCIONES DE APOYO:
 ### 1. Convertir Mayusculas:
 Esta función transforma los nombres de las categorías a mayúsculas. Esto permite comparar cadenas de texto de forma uniforme (evitando errores por diferencias de escritura) y mejora la estética de las tablas de datos.
-
-1. Validación previa: El sistema verifica si existen tareas en general y luego busca la categoría en la lista de categorías.
-2. Optimización: Si la categoría no existe o si el contador de pendientes es 0, la función termina de inmediato con un mensaje informativo, evitando procesar la cola innecesariamente.
-3. Búsqueda: Si la categoría es válida, se recorre la cola global utilizando queue_front y queue_next. El sistema compara los strings y despliega en una tabla solo aquellas tareas que coinciden con el filtro, respetando estrictamente su orden de llegada original.
 
 ---
 
