@@ -13,7 +13,7 @@ Estudiante: Iván Octavio García Briones
 Carrera: Ingeniería Civíl en Informática
 
 Repositorio Tarea 1: https://github.com/garciaivan11/Tarea1
-Uso de IA: 
+Uso de IA: https://gemini.google.com/share/01c5cfe34c85
 
 =================== REPO DE GIT ============== */ 
 
